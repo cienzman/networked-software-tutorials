@@ -1,0 +1,35 @@
+package com.counter;
+
+import akka.actor.AbstractActor;
+import akka.actor.Props;
+
+public class CounterActor extends AbstractActor {
+
+	private int counter;
+
+	public CounterActor() {
+		this.counter = 0;
+	}
+
+	@Override
+	public Receive createReceive() {
+		return receiveBuilder().match(IncreaseMessage.class, this::onIncreaseMessage).
+				match(DecreaseMessage.class, this::onDecreaseMessage).
+				build();
+	}
+
+	void onIncreaseMessage(IncreaseMessage msg) {
+		++counter;
+		System.out.println("Counter increased to " + counter);
+	}
+	
+	void onDecreaseMessage(DecreaseMessage msg) {
+		counter = counter -1;
+		System.out.println("Counter decreased to " + counter);
+	}
+
+	public static Props props() {
+		return Props.create(CounterActor.class);
+	}
+
+}

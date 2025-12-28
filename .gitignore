@@ -1,0 +1,68 @@
+# --- General & OS ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+*.log
+
+# --- Java & Scala (Akka, Spark, Kafka) ---
+target/
+bin/
+build/
+*.class
+*.jar
+*.war
+*.ear
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+# SBT
+.bsp/
+project/target/
+project/project/
+
+# --- Node.js (Computing Continuum) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+dist/
+coverage/
+
+# --- C/C++ & MPI (High Performance Computing) ---
+*.o
+*.obj
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+# Make dependencies
+.d/
+.deps/
+
+# --- Contiki-NG (IoT) ---
+# Contiki build artifacts
+obj_*
+symbols.c
+symbols.h
+*.cooja
+*.csc
+contiki-ng-*.map
+*.elf
+*.hex
+# Cooja simulator specific
+build/
+cooja.config
+
+# --- Jupyter Notebooks (Data Analytics) ---
+.ipynb_checkpoints/
