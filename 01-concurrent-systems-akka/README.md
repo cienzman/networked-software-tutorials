@@ -33,7 +33,7 @@ The examples in this folder demonstrate:
 2.  **Fault Tolerance:** The "Let it crash" philosophy using Supervisor Strategies.
 3.  **Message Passing:** Asynchronous communication between actors.
 
-## 📂 Code Structure
+## Code Structure
 
 ### 1. Basic Counter (Concurrency)
 * **`CounterActor.java`**: A simple actor that holds an internal counter variable. It reacts to `IncreaseMessage` and `DecreaseMessage` to modify its state.
