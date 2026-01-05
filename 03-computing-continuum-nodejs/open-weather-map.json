@@ -1,0 +1,156 @@
+[
+    {
+        "id": "a98723cc0f955641",
+        "type": "tab",
+        "label": "OpenWeatherMap",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0a7b3510f358c589",
+        "type": "openweathermap",
+        "z": "a98723cc0f955641",
+        "name": "openWeatherMap_first_test",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 540,
+        "y": 160,
+        "wires": [
+            [
+                "7f37cc4152dd4af8",
+                "687ab50a4c4d9e96"
+            ]
+        ]
+    },
+    {
+        "id": "7f37cc4152dd4af8",
+        "type": "debug",
+        "z": "a98723cc0f955641",
+        "name": "Show Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "f44a10a80d0d703c",
+        "type": "file",
+        "z": "a98723cc0f955641",
+        "name": "Celsius temperature Log",
+        "filename": "wheaterFile",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 1170,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "811eb5d239b77426",
+        "type": "inject",
+        "z": "a98723cc0f955641",
+        "name": "Trigger Weather Every sec",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Weather",
+        "payload": "",
+        "payloadType": "num",
+        "x": 220,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "687ab50a4c4d9e96",
+        "type": "function",
+        "z": "a98723cc0f955641",
+        "name": "Slice, Take only TempC",
+        "func": "let newMsg = {\n    topic: msg.topic,\n    payload: msg.payload.tempc,\n    _msgid: msg._msgid,\n}\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 280,
+        "wires": [
+            [
+                "f44a10a80d0d703c"
+            ]
+        ]
+    },
+    {
+        "id": "e6fe2fb3da9ea2c8",
+        "type": "file in",
+        "z": "a98723cc0f955641",
+        "name": "Read Wheater File Content",
+        "filename": "wheaterFile",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 500,
+        "y": 400,
+        "wires": [
+            [
+                "fa6bf63364fc1dcd"
+            ]
+        ]
+    },
+    {
+        "id": "fa6bf63364fc1dcd",
+        "type": "debug",
+        "z": "a98723cc0f955641",
+        "name": "Show File Content",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 850,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "98a27aa424ac2588",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-openweathermap": "1.0.1"
+        }
+    }
+]
