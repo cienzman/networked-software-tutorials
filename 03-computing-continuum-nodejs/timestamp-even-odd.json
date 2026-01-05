@@ -1,0 +1,94 @@
+[
+    {
+        "id": "07fec32010d74e69",
+        "type": "tab",
+        "label": "Timestamp Even Odd",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "72fc9513efa526a0",
+        "type": "inject",
+        "z": "07fec32010d74e69",
+        "name": "Inject Timestamp",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "time",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fc7a754056882c79",
+        "type": "debug",
+        "z": "07fec32010d74e69",
+        "name": "Timestamp is even",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "9e0839164b839541",
+        "type": "debug",
+        "z": "07fec32010d74e69",
+        "name": "Timestamp is odd",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "09235e9d58bec7cd",
+        "type": "function",
+        "z": "07fec32010d74e69",
+        "name": "Check Timestamp",
+        "func": "if (msg.payload % 2 == 0) {\n    msg.payload = \"Time is even\";\n    return [ msg, null];\n} else{\n    msg.payload = \"Time is odd\";\n    return [ null, msg];\n}   \nreturn [ null, null]",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 160,
+        "wires": [
+            [
+                "fc7a754056882c79"
+            ],
+            [
+                "9e0839164b839541"
+            ]
+        ]
+    }
+]

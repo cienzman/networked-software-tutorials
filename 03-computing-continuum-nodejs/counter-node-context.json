@@ -1,0 +1,66 @@
+[
+    {
+        "id": "78fba32f2a0e24d4",
+        "type": "tab",
+        "label": "Counter With Node Context",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a07efd65b33b35d8",
+        "type": "inject",
+        "z": "78fba32f2a0e24d4",
+        "name": "Trigger",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 208,
+        "y": 269,
+        "wires": [
+            [
+                "0db0dfaa1d5d2ce2"
+            ]
+        ]
+    },
+    {
+        "id": "0db0dfaa1d5d2ce2",
+        "type": "function",
+        "z": "78fba32f2a0e24d4",
+        "name": "Count",
+        "func": "if (!context.get(\"value\")) {\n  context.set (\"value\",0);\n}\n\nmsg.payload = context.get(\"value\");\n\ncontext.set(\"value\",\n  context.get(\"value\")+1); \n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 385,
+        "y": 269,
+        "wires": [
+            [
+                "d9467f84fab61b67"
+            ]
+        ]
+    },
+    {
+        "id": "d9467f84fab61b67",
+        "type": "debug",
+        "z": "78fba32f2a0e24d4",
+        "name": "Current Value",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 574,
+        "y": 269,
+        "wires": []
+    }
+]

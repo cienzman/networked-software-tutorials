@@ -1,0 +1,128 @@
+[
+    {
+        "id": "227eb15c.8af2e6",
+        "type": "tab",
+        "label": "Counter With File",
+        "disabled": true,
+        "info": ""
+    },
+    {
+        "id": "a1c6bc80bdda0e46",
+        "type": "inject",
+        "z": "227eb15c.8af2e6",
+        "name": "Trigger",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 468,
+        "y": 181,
+        "wires": [
+            [
+                "d979c37b4dc27540"
+            ]
+        ]
+    },
+    {
+        "id": "01d81eea3598b16c",
+        "type": "inject",
+        "z": "227eb15c.8af2e6",
+        "name": "Initialize to 0",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 427,
+        "y": 271,
+        "wires": [
+            [
+                "4493b1a308e9c15f"
+            ]
+        ]
+    },
+    {
+        "id": "4493b1a308e9c15f",
+        "type": "file",
+        "z": "227eb15c.8af2e6",
+        "name": "Write Counter",
+        "filename": "counter",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 647,
+        "y": 271,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d979c37b4dc27540",
+        "type": "file in",
+        "z": "227eb15c.8af2e6",
+        "name": "Read Counter",
+        "filename": "counter",
+        "filenameType": "str",
+        "format": "lines",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": true,
+        "x": 660,
+        "y": 180,
+        "wires": [
+            [
+                "b74f669fc087ad5b"
+            ]
+        ]
+    },
+    {
+        "id": "b74f669fc087ad5b",
+        "type": "function",
+        "z": "227eb15c.8af2e6",
+        "name": "Convert and Increment",
+        "func": "if (msg.payload != null){\n  msg.payload = Number(msg.payload) + 1;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 885,
+        "y": 180,
+        "wires": [
+            [
+                "df29a243803f8f89",
+                "4493b1a308e9c15f"
+            ]
+        ]
+    },
+    {
+        "id": "df29a243803f8f89",
+        "type": "debug",
+        "z": "227eb15c.8af2e6",
+        "name": "Current Value",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 864,
+        "y": 271,
+        "wires": []
+    }
+]

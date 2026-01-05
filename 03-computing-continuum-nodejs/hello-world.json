@@ -1,0 +1,104 @@
+[
+    {
+        "id": "b2a389ebb4403fde",
+        "type": "tab",
+        "label": "Hello World Flow",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "2e18bd7a656eb72c",
+        "type": "inject",
+        "z": "b2a389ebb4403fde",
+        "name": "Trigger every five sec with Hello World",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Hello",
+        "payload": "Hello World",
+        "payloadType": "str",
+        "x": 200,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f98ccdc9372005da",
+        "type": "debug",
+        "z": "b2a389ebb4403fde",
+        "name": "Print Timestamp",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b34d9207d84f2ece",
+        "type": "e-mail",
+        "z": "b2a389ebb4403fde",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": true,
+        "tls": false,
+        "name": "vincedg02@gmail.com",
+        "dname": "",
+        "x": 540,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "acc86ebfcdd6f3e7",
+        "type": "delay",
+        "z": "b2a389ebb4403fde",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 440,
+        "y": 200,
+        "wires": [
+            [
+                "f98ccdc9372005da"
+            ]
+        ]
+    },
+    {
+        "id": "4bacbe8ba4c6245a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-email": "5.0.0"
+        }
+    }
+]
