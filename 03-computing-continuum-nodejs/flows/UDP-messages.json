@@ -1,0 +1,179 @@
+[
+    {
+        "id": "97c8d2e85da31d33",
+        "type": "tab",
+        "label": "UDP messages",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8304922cb52dea21",
+        "type": "inject",
+        "z": "97c8d2e85da31d33",
+        "name": "Trigger Execution of the flow",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "time",
+        "payload": "",
+        "payloadType": "date",
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "15872b24e62f37f8"
+            ]
+        ]
+    },
+    {
+        "id": "e3e765697b97b37c",
+        "type": "udp out",
+        "z": "97c8d2e85da31d33",
+        "name": "Send UDP",
+        "addr": "127.0.0.1",
+        "iface": "",
+        "port": "8912",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "false",
+        "x": 1310,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "56e8d4b50983150a",
+        "type": "udp in",
+        "z": "97c8d2e85da31d33",
+        "name": "Receive UDP messages",
+        "iface": "",
+        "port": "8912",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 430,
+        "y": 320,
+        "wires": [
+            [
+                "d59ded29e38a4576",
+                "5f1db38b6fb9bcde"
+            ]
+        ]
+    },
+    {
+        "id": "7ea32ac1cdad64be",
+        "type": "debug",
+        "z": "97c8d2e85da31d33",
+        "name": "Show the Payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1270,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "15872b24e62f37f8",
+        "type": "function",
+        "z": "97c8d2e85da31d33",
+        "name": "function",
+        "func": "let newPayload = {\n    greeting : \"hello\",\n    timestamp : msg.payload,\n};\n\nlet newMsg = {\n    topic : msg.topic,\n    payload : newPayload,\n    _msgid : msg._msgid,\n};\n\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 180,
+        "wires": [
+            [
+                "db168563167569fb"
+            ]
+        ]
+    },
+    {
+        "id": "db168563167569fb",
+        "type": "json",
+        "z": "97c8d2e85da31d33",
+        "name": "Translate into JSON",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 860,
+        "y": 180,
+        "wires": [
+            [
+                "e3e765697b97b37c",
+                "654b8ab86f236a26"
+            ]
+        ]
+    },
+    {
+        "id": "d59ded29e38a4576",
+        "type": "json",
+        "z": "97c8d2e85da31d33",
+        "name": "Translate into Java Script Object",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 750,
+        "y": 320,
+        "wires": [
+            [
+                "7ea32ac1cdad64be"
+            ]
+        ]
+    },
+    {
+        "id": "654b8ab86f236a26",
+        "type": "debug",
+        "z": "97c8d2e85da31d33",
+        "name": "msg.payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1170,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "5f1db38b6fb9bcde",
+        "type": "debug",
+        "z": "97c8d2e85da31d33",
+        "name": "msg.payload",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 420,
+        "wires": []
+    }
+]

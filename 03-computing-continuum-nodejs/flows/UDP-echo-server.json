@@ -1,0 +1,228 @@
+[
+    {
+        "id": "0f878789f06582b5",
+        "type": "tab",
+        "label": "UDP Echo Server",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "033b0d4a0ead8e4c",
+        "type": "udp in",
+        "z": "0f878789f06582b5",
+        "name": "Receive",
+        "iface": "",
+        "port": "5555",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "buffer",
+        "x": 80,
+        "y": 420,
+        "wires": [
+            [
+                "dacfc3fc95871e3e",
+                "871f6f94c63ebe69"
+            ]
+        ]
+    },
+    {
+        "id": "dacfc3fc95871e3e",
+        "type": "delay",
+        "z": "0f878789f06582b5",
+        "name": "Wait 1 sec",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 410,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "39af92ca7c377594",
+        "type": "udp out",
+        "z": "0f878789f06582b5",
+        "name": "Send Back",
+        "addr": "127.0.0.1",
+        "iface": "",
+        "port": "5555",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "false",
+        "x": 830,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "b34b7b8b0c154992",
+        "type": "debug",
+        "z": "0f878789f06582b5",
+        "name": "Dump Msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "6603caa94967634e",
+        "type": "inject",
+        "z": "0f878789f06582b5",
+        "name": "Trigger Execution of the flow",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Weather",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e1faa9b56ae77786",
+        "type": "openweathermap",
+        "z": "0f878789f06582b5",
+        "name": "openWeatherMap_first_test",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 560,
+        "y": 60,
+        "wires": [
+            [
+                "1ebc5ff41d083c66",
+                "95c18a9a1990015a"
+            ]
+        ]
+    },
+    {
+        "id": "1ebc5ff41d083c66",
+        "type": "function",
+        "z": "0f878789f06582b5",
+        "name": "Create Temperature Msg",
+        "func": "let newPayload = {\n    intro: \"The temperature in Milan is\",\n    tempc: msg.payload.tempc,\n}\n\nlet newMsg = {\n    topic: msg.topic,\n    payload: newPayload,\n    _msgid: msg._msgid, \n}\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 140,
+        "wires": [
+            [
+                "1e14178e0281b579"
+            ]
+        ]
+    },
+    {
+        "id": "1e14178e0281b579",
+        "type": "json",
+        "z": "0f878789f06582b5",
+        "name": "Translate into JSON",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 1100,
+        "y": 220,
+        "wires": [
+            [
+                "39af92ca7c377594",
+                "9465b5467e8b5cce"
+            ]
+        ]
+    },
+    {
+        "id": "871f6f94c63ebe69",
+        "type": "json",
+        "z": "0f878789f06582b5",
+        "name": "Translate into Java Script Object",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 290,
+        "y": 280,
+        "wires": [
+            [
+                "b34b7b8b0c154992"
+            ]
+        ]
+    },
+    {
+        "id": "95c18a9a1990015a",
+        "type": "debug",
+        "z": "0f878789f06582b5",
+        "name": "Show Weather Info",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "9465b5467e8b5cce",
+        "type": "debug",
+        "z": "0f878789f06582b5",
+        "name": "Show Sent Data",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1300,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "d7ea61ea313110c6",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-openweathermap": "1.0.1"
+        }
+    }
+]
