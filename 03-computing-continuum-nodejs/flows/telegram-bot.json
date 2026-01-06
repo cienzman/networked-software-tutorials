@@ -1,0 +1,222 @@
+[
+    {
+        "id": "3d16a863b8777637",
+        "type": "tab",
+        "label": "Telegram Bot for Weather",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5c250de29f76fea5",
+        "type": "chatbot-telegram-receive",
+        "z": "3d16a863b8777637",
+        "bot": "ba3217a423c61339",
+        "botProduction": "",
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "459178b8599ca125",
+                "16d5b0ce79062500"
+            ]
+        ]
+    },
+    {
+        "id": "4bd43ce50f0a49be",
+        "type": "chatbot-telegram-send",
+        "z": "3d16a863b8777637",
+        "bot": "ba3217a423c61339",
+        "botProduction": "",
+        "track": false,
+        "passThrough": false,
+        "errorOutput": false,
+        "outputs": 0,
+        "x": 1390,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "459178b8599ca125",
+        "type": "debug",
+        "z": "3d16a863b8777637",
+        "name": "Show Incoming Msg!",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "16d5b0ce79062500",
+        "type": "function",
+        "z": "3d16a863b8777637",
+        "name": "Compute Answer",
+        "func": "if (msg.payload.content==\"What's your name?\") {\n    msg.payload.content = \"I am the NSDS Telegram Bot!\";\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [msg, null, null, null];\n} else if(msg.payload.content.startsWith(\"My name is\")) {\n    let username = msg.payload.content.substring(11);\n    msg.payload.content = \"Hello \" + username +\"!\";\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    let fileMsg = {\n    payload: username,\n    };\n    return [msg, null, null, fileMsg];\n} else if(msg.payload.content==\"What is the temperature in Milan?\") {\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [null, msg, null, null];\n} else if (msg.payload.content == \"What is the temperature in Rome?\") {\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [null, null, msg, null];\n}\n else {\n    msg.payload.content = \"I don't get what you're asking...\";\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [msg, null, null, null];\n}\n",
+        "outputs": 4,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 280,
+        "wires": [
+            [
+                "4bd43ce50f0a49be"
+            ],
+            [
+                "277a53009a1bc1fb"
+            ],
+            [
+                "c4c15b7ae4462c78"
+            ],
+            [
+                "a65cd34e4c2ec44d",
+                "9fefb861c01eb3b9"
+            ]
+        ]
+    },
+    {
+        "id": "277a53009a1bc1fb",
+        "type": "openweathermap",
+        "z": "3d16a863b8777637",
+        "name": "MIlan's Weather",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 880,
+        "y": 240,
+        "wires": [
+            [
+                "88f634ed26fe094c",
+                "0f352a771f99f704"
+            ]
+        ]
+    },
+    {
+        "id": "c4c15b7ae4462c78",
+        "type": "openweathermap",
+        "z": "3d16a863b8777637",
+        "name": "Rome's Weather",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Rome",
+        "country": "IT",
+        "language": "en",
+        "x": 870,
+        "y": 500,
+        "wires": [
+            [
+                "88f634ed26fe094c",
+                "0f352a771f99f704"
+            ]
+        ]
+    },
+    {
+        "id": "88f634ed26fe094c",
+        "type": "debug",
+        "z": "3d16a863b8777637",
+        "name": "Show Weather!",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "0f352a771f99f704",
+        "type": "chatbot-message",
+        "z": "3d16a863b8777637",
+        "name": "Temperature Text",
+        "message": [
+            {
+                "message": "The current temperature in {{payload.location}} is: {{payload.tempc}} Celsius Degrees"
+            }
+        ],
+        "language": "none",
+        "x": 1250,
+        "y": 300,
+        "wires": [
+            [
+                "4bd43ce50f0a49be"
+            ]
+        ]
+    },
+    {
+        "id": "9fefb861c01eb3b9",
+        "type": "file",
+        "z": "3d16a863b8777637",
+        "name": "Append Username Log",
+        "filename": "List of Usernames",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 910,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a65cd34e4c2ec44d",
+        "type": "debug",
+        "z": "3d16a863b8777637",
+        "name": "Dumping to File",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "ba3217a423c61339",
+        "type": "chatbot-telegram-node",
+        "botname": "Node-RED Lab",
+        "usernames": "",
+        "polling": "1000",
+        "store": "",
+        "log": "",
+        "debug": false,
+        "skipMediaFiles": false,
+        "webHook": "",
+        "connectMode": "polling",
+        "storeMessages": true,
+        "enableMissionControl": false,
+        "inspectMessages": true,
+        "chatbotId": ""
+    },
+    {
+        "id": "5bc52d767c92da8a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-chatbot": "1.2.4",
+            "node-red-node-openweathermap": "1.0.1"
+        }
+    }
+]
