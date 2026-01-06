@@ -1,0 +1,117 @@
+[
+    {
+        "id": "f603a5df8bcfc917",
+        "type": "tab",
+        "label": "MQTT",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "561c2de8d93a0d4d",
+        "type": "mqtt in",
+        "z": "f603a5df8bcfc917",
+        "name": "",
+        "topic": "neslabpolimi / smartcity / milan",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7f9b06f8fcff9a50",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 390,
+        "y": 260,
+        "wires": [
+            [
+                "a8068e75cb910d12",
+                "043e343146cfda45"
+            ]
+        ]
+    },
+    {
+        "id": "fe7b72307ac9b1c0",
+        "type": "debug",
+        "z": "f603a5df8bcfc917",
+        "name": "Show Current Max",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1030,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "043e343146cfda45",
+        "type": "function",
+        "z": "f603a5df8bcfc917",
+        "name": "Track Max",
+        "func": "if (msg.payload.fields.hasOwnProperty(\"pm25\")) { \n    if (Number(msg.payload.fields.pm25)>context.get(\"maxPM25\")) {\n        context.set(\"maxPM25\", Number(msg.payload.fields.pm25));\n    }\n}\n\nif (msg.payload.fields.hasOwnProperty(\"pm10\")) { \n    if (Number(msg.payload.fields.pm10)>context.get(\"maxPM10\")) {\n        context.set(\"maxPM10\", Number(msg.payload.fields.pm10));\n    }\n}\n\nif (msg.payload.fields.hasOwnProperty(\"temperature\")) { \n    if (Number(msg.payload.fields.temperature)>context.get(\"maxTemperature\")) {\n        context.set(\"maxTemperature\", Number(msg.payload.fields.temperature));\n    }\n}\n\nif (msg.payload.fields.hasOwnProperty(\"humidity\")) { \n    if (Number(msg.payload.fields.humidity)>context.get(\"maxHumidity\")) {\n        context.set(\"maxHumidity\", Number(msg.payload.fields.humidity));\n    }\n}\n\nlet newPayload = {\n    maxTemperature: context.get(\"maxTemperature\"),\n    maxHumidity: context.get(\"maxHumidity\"),\n    maxPM25: context.get(\"maxPM25\"),\n    maxPM10: context.get(\"maxPM10\"),\n};\n\n\nlet newMsg = {\n    topic: msg.topic,\n    payload: newPayload,\n};\n\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"maxTemperature\", 0);\ncontext.set(\"maxHumidity\", 0);\ncontext.set(\"maxPM25\", 0);\ncontext.set(\"maxPM10\", 0);",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 360,
+        "wires": [
+            [
+                "fe7b72307ac9b1c0"
+            ]
+        ]
+    },
+    {
+        "id": "a8068e75cb910d12",
+        "type": "debug",
+        "z": "f603a5df8bcfc917",
+        "name": "Show Sensor.commity Data",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "7f9b06f8fcff9a50",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mqtt.neslab.it",
+        "port": "3200",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
