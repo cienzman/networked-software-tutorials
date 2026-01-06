@@ -1,0 +1,503 @@
+[
+    {
+        "id": "f34cf95215dd0617",
+        "type": "tab",
+        "label": "Eval23",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0952e732c7722b39",
+        "type": "openweathermap",
+        "z": "f34cf95215dd0617",
+        "name": "Forecast_Milan",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Milan",
+        "country": "IT",
+        "language": "en",
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "f886ccbd5eb97c2a",
+                "363dae5401eab4fe"
+            ]
+        ]
+    },
+    {
+        "id": "c4ef13dc434d8f15",
+        "type": "chatbot-telegram-receive",
+        "z": "f34cf95215dd0617",
+        "bot": "ba3217a423c61339",
+        "botProduction": "",
+        "x": 90,
+        "y": 220,
+        "wires": [
+            [
+                "a88d458af23fa642",
+                "5aee57e26e378dd8"
+            ]
+        ]
+    },
+    {
+        "id": "33e05a27155d776a",
+        "type": "chatbot-telegram-send",
+        "z": "f34cf95215dd0617",
+        "bot": "ba3217a423c61339",
+        "botProduction": "",
+        "track": false,
+        "passThrough": false,
+        "errorOutput": false,
+        "outputs": 0,
+        "x": 1430,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "a88d458af23fa642",
+        "type": "function",
+        "z": "f34cf95215dd0617",
+        "name": "Dispatcher",
+        "func": "if(msg.payload.content == \"What tomorrow’s forecast in Milan?\") {\n    flow.set(\"what\", \"forecast\");\n    flow.set(\"when\", \"TOMORROW: \");\n    flow.set(\"counterMForecast\", flow.get(\"counterMForecast\")+1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [msg, null];\n\n} else if (msg.payload.content == \"What in two days forecast in Milan?\") {\n    flow.set(\"what\", \"forecast\");\n    flow.set(\"when\", \"IN TWO DAYS: \");\n    flow.set(\"counterMForecast\", flow.get(\"counterMForecast\") + 1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [msg, null];\n\n} else if (msg.payload.content == \"What tomorrow’s forecast in Rome?\") {\n    flow.set(\"what\", \"forecast\");\n    flow.set(\"when\", \"TOMORROW: \");\n    flow.set(\"counterRForecast\", flow.get(\"counterRForecast\") + 1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [null, msg];\n\n} else if (msg.payload.content == \"What in two days forecast in Rome?\") {\n    flow.set(\"what\", \"forecast\");\n    flow.set(\"when\", \"IN TWO DAYS: \");\n    flow.set(\"counterRForecast\", flow.get(\"counterRForecast\") + 1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [null, msg];\n\n} else if (msg.payload.content == \"What’s the expected wind speed tomorrow in Milan?\") {\n    flow.set(\"what\", \"wind\");\n    flow.set(\"when\", \"TOMORROW: \");\n    flow.set(\"counterMWind\", flow.get(\"counterMWind\") + 1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [msg, null];\n\n} else if (msg.payload.content == \"What’s the expected wind speed in two days in Milan?\") {\n    flow.set(\"what\", \"wind\");\n    flow.set(\"when\", \"IN TWO DAYS: \");\n    flow.set(\"counterMWind\", flow.get(\"counterMWind\") + 1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [msg, null];\n\n} else if (msg.payload.content == \"What’s the expected wind speed tomorrow in Rome?\"){\n    flow.set(\"what\", \"wind\");\n    flow.set(\"when\", \"TOMORROW: \");\n    flow.set(\"counterRWind\", flow.get(\"counterRWind\")+1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [null, msg];\n    \n} else if (msg.payload.content == \"What’s the expected wind speed in two days in Rome?\"){\n    flow.set(\"what\", \"wind\");\n    flow.set(\"when\", \"IN TWO DAYS: \");\n    flow.set(\"counterRWind\", flow.get(\"counterRWind\")+1);\n    delete msg.ts;\n    delete msg.transport;\n    msg.payload.inbound = false;\n    msg.payload.fallback = null;\n    return [null, msg];\n    \n} else {\n}",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"counterMForecast\", 0);\nflow.set(\"counterRForecast\", 0);\nflow.set(\"counterMWind\", 0);\nflow.set(\"counterRWind\", 0);\nflow.set(\"when\",undefined);\nflow.set(\"what\",undefined);",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "0952e732c7722b39"
+            ],
+            [
+                "079b72f2a0889b52"
+            ]
+        ]
+    },
+    {
+        "id": "f886ccbd5eb97c2a",
+        "type": "function",
+        "z": "f34cf95215dd0617",
+        "name": "Milan Forecast Slice",
+        "func": "if (flow.get(\"what\") == \"forecast\") {\n\n    if (context.get(\"MilanForecast\") == msg.payload.description) {\n        msg.payload.content = flow.get(\"when\") + msg.payload.description + \" It is the same as the last time I was asked!\",\n        context.set(\"MilanForecast\", msg.payload.description); //redundant\n        return msg;\n    } else if (context.get(\"MilanForecast\") != msg.payload.description) {\n        msg.payload.content = flow.get(\"when\") + msg.payload.description + \" It changed since the last time I was asked!\";\n        context.set(\"MilanForecast\", msg.payload.description); \n        return msg;\n    } \n    \n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"MilanForecast\", \"no measure yet\");",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 120,
+        "wires": [
+            [
+                "19adbbb52c9a1ae7"
+            ]
+        ]
+    },
+    {
+        "id": "079b72f2a0889b52",
+        "type": "openweathermap",
+        "z": "f34cf95215dd0617",
+        "name": "Forecast_Rome",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "Rome",
+        "country": "IT",
+        "language": "en",
+        "x": 520,
+        "y": 320,
+        "wires": [
+            [
+                "291f01eb1bf263ce",
+                "37576393364fbfe9"
+            ]
+        ]
+    },
+    {
+        "id": "291f01eb1bf263ce",
+        "type": "function",
+        "z": "f34cf95215dd0617",
+        "name": "Rome Forecast Slice",
+        "func": "if(flow.get(\"what\") == \"forecast\") {\n\n    if (context.get(\"RomeForecast\") == msg.payload.description) {\n        msg.payload.content = flow.get(\"when\") +  msg.payload.description + \" It is the same as the last time I was asked!\";\n        context.set(\"RomeForecast\", msg.payload.description); //redundant\n        return msg;\n    } else if (context.get(\"RomeForecast\") != msg.payload.description) {\n        msg.payload.content = flow.get(\"when\") +  msg.payload.description + \" It changed since the last time I was asked!\";\n        context.set(\"RomeForecast\", msg.payload.description); \n        return msg;\n    } \n\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"RomeForecast\",\"no measure yet\");",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 300,
+        "wires": [
+            [
+                "fe5bea711b09c826"
+            ]
+        ]
+    },
+    {
+        "id": "363dae5401eab4fe",
+        "type": "function",
+        "z": "f34cf95215dd0617",
+        "name": "Milan Wind Slice",
+        "func": "if(flow.get(\"what\") == \"wind\") {\n\n\n    if (context.get(\"MilanWind\") == msg.payload.windspeed) {\n        msg.payload.content = flow.get(\"when\") + msg.payload.windspeed + \" It is the same as the last time I was asked!\";\n        context.set(\"MilanWind\", msg.payload.windspeed); //redundant\n        return msg;\n    } else if (context.get(\"MilanWind\") != msg.payload.windspeed) {\n        msg.payload.content = flow.get(\"when\") +  msg.payload.windspeed + \" It changed since the last time I was asked!\";\n        context.set(\"MilanWind\", msg.payload.windspeed); \n        return msg;\n    } \n\n}\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"MilanWind\",0);\n",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 180,
+        "wires": [
+            [
+                "740fe0d92ea3d861"
+            ]
+        ]
+    },
+    {
+        "id": "37576393364fbfe9",
+        "type": "function",
+        "z": "f34cf95215dd0617",
+        "name": "Rome Wind Slice",
+        "func": "if(flow.get(\"what\") == \"wind\") {\n\n    if (context.get(\"RomeWind\") == msg.payload.windspeed) {\n        msg.payload.content = flow.get(\"when\") +  msg.payload.windspeed + \" It is the same as the last time I was asked!\";\n        context.set(\"RomeWind\", msg.payload.windspeed); //redundant\n        return msg;\n    } else if (context.get(\"RomeWind\") != msg.payloadwindspeed) {\n        msg.payload.content = flow.get(\"when\") +  msg.payload.windspeed + \" It changed since the last time I was asked!\";\n        context.set(\"RomeWind\", msg.payload.windspeed); \n        return msg;\n    } \n\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"RomeWind\", 0);\n",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 360,
+        "wires": [
+            [
+                "a40509afd272b4ad"
+            ]
+        ]
+    },
+    {
+        "id": "19adbbb52c9a1ae7",
+        "type": "chatbot-message",
+        "z": "f34cf95215dd0617",
+        "name": "Milan Forecast Slice",
+        "message": [
+            {
+                "message": "{{payload.content}}"
+            }
+        ],
+        "language": "none",
+        "x": 1100,
+        "y": 120,
+        "wires": [
+            [
+                "33e05a27155d776a"
+            ]
+        ]
+    },
+    {
+        "id": "fe5bea711b09c826",
+        "type": "chatbot-message",
+        "z": "f34cf95215dd0617",
+        "name": "Rome Forecast Slice",
+        "message": [
+            {
+                "message": "{{payload.content}}"
+            }
+        ],
+        "language": "none",
+        "x": 1100,
+        "y": 300,
+        "wires": [
+            [
+                "33e05a27155d776a"
+            ]
+        ]
+    },
+    {
+        "id": "740fe0d92ea3d861",
+        "type": "chatbot-message",
+        "z": "f34cf95215dd0617",
+        "name": "Milan Wind Slice",
+        "message": [
+            {
+                "message": "Expected wind speed in Milan. {{payload.content}}"
+            }
+        ],
+        "language": "none",
+        "x": 1080,
+        "y": 180,
+        "wires": [
+            [
+                "33e05a27155d776a"
+            ]
+        ]
+    },
+    {
+        "id": "a40509afd272b4ad",
+        "type": "chatbot-message",
+        "z": "f34cf95215dd0617",
+        "name": "Rome Wind Slice",
+        "message": [
+            {
+                "message": "Expected wind speed in Rome. {{payload.content}}"
+            }
+        ],
+        "language": "none",
+        "x": 1090,
+        "y": 360,
+        "wires": [
+            [
+                "33e05a27155d776a"
+            ]
+        ]
+    },
+    {
+        "id": "2cd076ad74fd9366",
+        "type": "file",
+        "z": "f34cf95215dd0617",
+        "name": "write to queries_counter_file",
+        "filename": "queries_counter_file",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 580,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bae257a7f293493f",
+        "type": "inject",
+        "z": "f34cf95215dd0617",
+        "name": "Inject Queries Counter",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "45",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Queries Counter",
+        "payload": "\"counterMForecast\"",
+        "payloadType": "flow",
+        "x": 210,
+        "y": 520,
+        "wires": [
+            [
+                "2cd076ad74fd9366",
+                "010c6cb2718b7865"
+            ]
+        ]
+    },
+    {
+        "id": "010c6cb2718b7865",
+        "type": "function",
+        "z": "f34cf95215dd0617",
+        "name": "zeroes counter",
+        "func": "flow.set(\"counterMForecast\", 0);\nflow.set(\"counterRForecast\", 0);\nflow.set(\"counterMWind\", 0);\nflow.set(\"counterRWind\", 0);",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0880f87dea5daa6d",
+        "type": "inject",
+        "z": "f34cf95215dd0617",
+        "name": "Inject Queries Counter",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "45",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Queries Counter",
+        "payload": "\"counterRForecast\"",
+        "payloadType": "flow",
+        "x": 210,
+        "y": 580,
+        "wires": [
+            [
+                "b73070588eece461"
+            ]
+        ]
+    },
+    {
+        "id": "53a2f64cfbfffdbb",
+        "type": "inject",
+        "z": "f34cf95215dd0617",
+        "name": "Inject Queries Counter",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "45",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Queries Counter",
+        "payload": "\"counterMWind\"",
+        "payloadType": "flow",
+        "x": 210,
+        "y": 640,
+        "wires": [
+            [
+                "862f47b3e07a4a11"
+            ]
+        ]
+    },
+    {
+        "id": "fc009bc0db25b783",
+        "type": "inject",
+        "z": "f34cf95215dd0617",
+        "name": "Inject Queries Counter",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "45",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Queries Counter",
+        "payload": "\"counterRWind\"",
+        "payloadType": "flow",
+        "x": 210,
+        "y": 700,
+        "wires": [
+            [
+                "9d0db08e3e9cd3e9"
+            ]
+        ]
+    },
+    {
+        "id": "b73070588eece461",
+        "type": "file",
+        "z": "f34cf95215dd0617",
+        "name": "write to queries_counter_file",
+        "filename": "queries_counter_file",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 580,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "862f47b3e07a4a11",
+        "type": "file",
+        "z": "f34cf95215dd0617",
+        "name": "write to queries_counter_file",
+        "filename": "queries_counter_file",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 580,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9d0db08e3e9cd3e9",
+        "type": "file",
+        "z": "f34cf95215dd0617",
+        "name": "write to queries_counter_file",
+        "filename": "queries_counter_file",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 580,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5aee57e26e378dd8",
+        "type": "debug",
+        "z": "f34cf95215dd0617",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "ba3217a423c61339",
+        "type": "chatbot-telegram-node",
+        "botname": "Node-RED Lab",
+        "usernames": "",
+        "polling": "1000",
+        "store": "",
+        "log": "",
+        "debug": false,
+        "skipMediaFiles": false,
+        "webHook": "",
+        "connectMode": "polling",
+        "storeMessages": true,
+        "enableMissionControl": false,
+        "inspectMessages": true,
+        "chatbotId": ""
+    },
+    {
+        "id": "57a8ecebcea8923d",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-openweathermap": "1.0.1",
+            "node-red-contrib-chatbot": "1.2.4"
+        }
+    }
+]

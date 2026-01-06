@@ -1,0 +1,371 @@
+[
+    {
+        "id": "fe85913cbc8ef4f6",
+        "type": "tab",
+        "label": "Eval24",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d423f799306b88f2",
+        "type": "mqtt in",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Sensor.Community Data",
+        "topic": "neslabpolimi/smartcity/milan",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7f9b06f8fcff9a50",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 80,
+        "wires": [
+            [
+                "098ba3a9aa262faa",
+                "93d545d65367f00c"
+            ]
+        ]
+    },
+    {
+        "id": "b217412f01b8802e",
+        "type": "debug",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Show AvgSC Temp",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "098ba3a9aa262faa",
+        "type": "function",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Compute Average Temperature",
+        "func": "context.set(\"consecutiveReadings\", context.get(\"consecutiveReadings\")+1);\nif(msg.payload.fields.hasOwnProperty(\"temperature\")){\n    context.set(\"sum\", context.get(\"sum\") + msg.payload.fields.temperature);\n    context.set(\"tempReadings\",context.get(\"tempReadings\")+1);\n} \nif(context.get(\"consecutiveReadings\") == 4){\n    flow.set(\"AvgSC\", context.get(\"sum\") / context.get(\"tempReadings\"))\n    //let averageTemp = context.get(\"sum\") / context.get(\"tempReadings\");\n    let averageMsg = {\n        payload: \"The average is: \" + flow.get(\"AvgSC\") + \" with \"\n            + context.get(\"tempReadings\") + \" readings\"\n            + \" The total reading are \" + context.get(\"consecutiveReadings\"),\n    };\n    context.set(\"consecutiveReadings\",0);\n    context.set(\"tempReadings\",0);\n    context.set(\"sum\", 0);\n        \n    return averageMsg;\n}\nlet newMsg = {\n    payload: \"The total reading are \" + context.get(\"consecutiveReadings\"),\n};\nreturn newMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\ncontext.set(\"consecutiveReadings\", 0);\ncontext.set(\"tempReadings\", 0);\ncontext.set(\"sum\", 0);\nflow.set(\"AvgSC\",0);",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 80,
+        "wires": [
+            [
+                "b217412f01b8802e"
+            ]
+        ]
+    },
+    {
+        "id": "93d545d65367f00c",
+        "type": "debug",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Show SC",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "a349250c4a041815",
+        "type": "function",
+        "z": "fe85913cbc8ef4f6",
+        "name": "OpenW_Temp_Slice",
+        "func": "flow.set(\"OpenW_temp\",msg.payload.tempk);\n\nlet newMsg = {\n    payload: \"msg.payload.tempk = \" + msg.payload.tempk\n        + \" flow.get(OpenW_temp) = \" + flow.get(\"OpenW_temp\"),\n}\nreturn newMsg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nflow.set(\"OpenW_temp\",0)",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 260,
+        "wires": [
+            [
+                "2c1c51becc3cb1a5"
+            ]
+        ]
+    },
+    {
+        "id": "10d794e4befc4146",
+        "type": "openweathermap",
+        "z": "fe85913cbc8ef4f6",
+        "name": "OpenW MIlan",
+        "wtype": "current",
+        "lon": "",
+        "lat": "",
+        "city": "MIlan",
+        "country": "IT",
+        "language": "en",
+        "x": 420,
+        "y": 260,
+        "wires": [
+            [
+                "a349250c4a041815",
+                "2d2fcb8b2df17836"
+            ]
+        ]
+    },
+    {
+        "id": "20ab9932919d7485",
+        "type": "inject",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Inject OpenW every minutes",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "OpenWeather",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 260,
+        "wires": [
+            [
+                "10d794e4befc4146"
+            ]
+        ]
+    },
+    {
+        "id": "2d2fcb8b2df17836",
+        "type": "debug",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Show OpenW",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "2c1c51becc3cb1a5",
+        "type": "debug",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Show OpenW Temp Slice",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "38cf0787bd3c033f",
+        "type": "function",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Verify Coherency",
+        "func": "if (Math.abs(flow.get(\"AvgSC\") - flow.get(\"OpenW_temp\") ) > msg.payload ){\n    let newMsg = {\n        payload: \"Temperature data is not coherent \" + flow.get(\"AvgSC\") + \" vs \"\n            + flow.get(\"OpenW_temp\"),\n    };\n    return newMsg\n}\nlet newMsg = {\n    payload: \"COHERENT! \" + flow.get(\"AvgSC\") + \" vs \"\n        + flow.get(\"OpenW_temp\"),\n    };\n    return newMsg\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\nflow.set(\"OpenW_temp\", 0)",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 440,
+        "wires": [
+            [
+                "4d72cf8a57ee6ae1"
+            ]
+        ]
+    },
+    {
+        "id": "4d72cf8a57ee6ae1",
+        "type": "debug",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Show Coherency",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "378af8b631dca5c6",
+        "type": "inject",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Simulated Threshold",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Threshold",
+        "payload": "2",
+        "payloadType": "num",
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "38cf0787bd3c033f"
+            ]
+        ]
+    },
+    {
+        "id": "fa1f658b0bcb5d27",
+        "type": "function",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Verify Coherency",
+        "func": "if( Math.abs( global.get(\"AvgSC\") - global.get(\"OpenW_temp\") ) > msg.payload ){\n    let newMsg = {\n        payload: \"Temperature data is not coherent\"\n    }\n    return newMsg\n}\nlet newMsg = {\n    payload: \"COHERENT!\"\n    }\n    return newMsg\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 600,
+        "wires": [
+            [
+                "0b24b0279bf55cc8",
+                "8180588566313ad1"
+            ]
+        ]
+    },
+    {
+        "id": "15685558b49b48a7",
+        "type": "mqtt in",
+        "z": "fe85913cbc8ef4f6",
+        "name": "threshold",
+        "topic": "neslabpolimi/nsds/eval24/k",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "7f9b06f8fcff9a50",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 100,
+        "y": 600,
+        "wires": [
+            [
+                "fa1f658b0bcb5d27"
+            ]
+        ]
+    },
+    {
+        "id": "0b24b0279bf55cc8",
+        "type": "mqtt out",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Publish Coherency",
+        "topic": "neslabpolimi/nsds/eval24/alarm",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "7f9b06f8fcff9a50",
+        "x": 630,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "8180588566313ad1",
+        "type": "debug",
+        "z": "fe85913cbc8ef4f6",
+        "name": "Show Coherency",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 510,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "7f9b06f8fcff9a50",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mqtt.neslab.it",
+        "port": "3200",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "d85d9c8044f22bbe",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-openweathermap": "1.0.1"
+        }
+    }
+]
