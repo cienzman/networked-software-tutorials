@@ -1,0 +1,166 @@
+==================================================================================
+MESSAGES
+==================================================================================
+
+MPI_Send  : Blocking (might block or buffer), asynchronous
+MPI_Isend : Nonblocking, asynchronous
+MPI_Ssend : Blocking, synchronous
+
+MPI_Recv  : Blocking
+MPI_Irecv : Non-blocking
+MPI_Sendrecv : Send a message and post a (blocking) receive before blocking
+
+MPI_Wait  : Blocking, Wait until an asynchronous call is completed
+
+MPI_Probe : Blocking
+
+MPI_Barrier : blocca tutti i processi nel comunicatore finché tutti non l'hanno raggiunta.
+
+MPI_Bcast : Blocking, Sincrona, Distribuisce una copia identica del dato dalla radice a tutti i processi.
+
+MPI_Reduce : raccoglie i dati da tutti i processi, esegue un'operazione matematica o logica su di essi, e memorizza il risultato finale solo sul processo root.
+
+MPI_AllReduce : fa la reduce e salva il valore ridotto in tutti i processi (è una combinazione di reduce + broadcast).
+
+MPI_Scatter : Il processo root divide un array di dati in blocchi e invia un blocco diverso a ciascun processo.
+
+MPI_Gather : Tutti i processi inviano i loro dati locali alla root, che li assembla in un unico array.
+
+
+==================================================================================
+SIGNATURES
+==================================================================================
+
+int MPI_Send(
+    const void *buf,    // Buffer di invio (dati da trasferire)
+    int count,          // Numero di elementi nel buffer
+    MPI_Datatype datatype, // Tipo di dati di ogni elemento (es. MPI_INT)
+    int dest,           // Rank del processo destinatario
+    int tag,            // Identificatore del messaggio (Tag)
+    MPI_Comm comm       // Communicator (contesto di comunicazione)
+);
+
+int MPI_Ssend(
+    const void *buf,    // Buffer di invio sincrono
+    int count,          // Numero di elementi nel buffer
+    MPI_Datatype datatype, // Tipo di dati di ogni elemento (es. MPI_INT)
+    int dest,           // Rank del processo destinatario
+    int tag,            // Identificatore del messaggio (Tag)
+    MPI_Comm comm       // Communicator (contesto di comunicazione)
+);
+
+int MPI_Isend(
+    const void *buf,    // Buffer di invio
+    int count,          // Numero di elementi nel buffer
+    MPI_Datatype datatype, // Tipo di dati di ogni elemento
+    int dest,           // Rank del processo destinatario
+    int tag,            // Identificatore del messaggio (Tag)
+    MPI_Comm comm,      // Communicator
+    MPI_Request *request // Handle per monitorare e attendere il completamento
+);
+
+int MPI_Recv(
+    void *buf,          // Buffer di ricezione (dove verranno memorizzati i dati)
+    int count,          // Conteggio massimo di elementi da ricevere
+    MPI_Datatype datatype, // Tipo di dati di ogni elemento
+    int source,         // Rank sorgente atteso (o MPI_ANY_SOURCE)
+    int tag,            // Tag atteso per la ricezione (o MPI_ANY_TAG)
+    MPI_Comm comm,      // Communicator
+    MPI_Status *status  // Stato della ricezione (contiene sorgente e tag effettivi)
+);
+
+int MPI_Irecv(
+    void *buf,          // Buffer di ricezione
+    int count,          // Conteggio massimo di elementi da ricevere
+    MPI_Datatype datatype, // Tipo di dati di ogni elemento
+    int source,         // Rank sorgente atteso (o MPI_ANY_SOURCE)
+    int tag,            // Tag atteso per la ricezione (o MPI_ANY_TAG)
+    MPI_Comm comm,      // Communicator
+    MPI_Request *request // Handle per monitorare e attendere il completamento
+);
+
+int MPI_Sendrecv(
+    const void* sendbuf,    // Buffer da inviare
+    int sendcount,          // Conteggio elementi da inviare
+    MPI_Datatype sendtype,  // Tipo dati da inviare
+    int dest,               // Rank del destinatario
+    int sendtag,            // Tag per l'invio
+    void* recvbuf,          // Buffer per la ricezione
+    int recvcount,          // Conteggio massimo elementi da ricevere
+    MPI_Datatype recvtype,  // Tipo dati per la ricezione
+    int source,             // Rank del mittente atteso
+    int recvtag,            // Tag atteso per la ricezione
+    MPI_Comm comm,          // Communicator
+    MPI_Status* status      // Status della ricezione
+);
+
+int MPI_Wait(
+    MPI_Request *request,   // Handle della richiesta (ottenuto da MPI_Isend/Irecv)
+    MPI_Status *status      // Stato della comunicazione (riporta i dettagli finali)
+);
+
+int MPI_Probe(
+    int source,         // Rank sorgente atteso (o MPI_ANY_SOURCE)
+    int tag,            // Tag atteso per la ricezione (o MPI_ANY_TAG)
+    MPI_Comm comm,      // Communicator
+    MPI_Status *status  // Stato del messaggio (contiene i metadati)
+);
+
+int MPI_Get_count(
+    const MPI_Status *status, // Puntatore alla struttura status popolata
+    MPI_Datatype datatype,    // Il tipo di dati usato per la ricezione
+    int *count                // Variabile int che riceverà il conteggio
+);
+
+int MPI_Barrier(
+    MPI_Comm communicator  // Communicator che include tutti i processi da sincronizzare
+);
+
+int MPI_Bcast(
+    void* data,          // Buffer da inviare (root) o da ricevere (tutti gli altri)
+    int count,           // Numero di elementi da distribuire
+    MPI_Datatype datatype, // Tipo di dati degli elementi
+    int root,            // Rank del processo sorgente (radice)
+    MPI_Comm communicator // Communicator
+);
+
+int MPI_Reduce(
+    const void* send_data, // Buffer di invio in ciascun processo
+    void* recv_data,       // Buffer di ricezione (solo la root riceve il risultato)
+    int count,             // Numero di elementi mandati da ogni processo
+    MPI_Datatype datatype, // Tipo di dati degli elementi
+    MPI_Op op,             // Operazione di riduzione (es. MPI_SUM, MPI_MAX)
+    int root,              // Rank del processo che riceve il risultato
+    MPI_Comm communicator  // Communicator
+);
+
+int MPI_Allreduce(
+    const void* sendbuf,   // Buffer di invio (dati locali in ciascun processo)
+    void* recvbuf,         // Buffer di ricezione (TUTTI i processi ricevono il risultato)
+    int count,             // Numero di elementi da ridurre in ciascun processo
+    MPI_Datatype datatype, // Tipo di dati degli elementi (es. MPI_INT, MPI_DOUBLE)
+    MPI_Op op,             // Operazione di riduzione (es. MPI_SUM, MPI_MAX)
+    MPI_Comm comm          // Comunicatore
+);
+
+int MPI_Scatter(
+    const void* send_data,  // Buffer di invio (solo root) contenente tutti i dati
+    int send_count,         // Numero di elementi inviati *a ciascun* processo dalla root
+    MPI_Datatype send_datatype, // Tipo di dati nel buffer di invio della root
+    void* recv_data,        // Buffer di ricezione (in tutti i processi) per il proprio blocco
+    int recv_count,         // Numero massimo di elementi da ricevere
+    MPI_Datatype recv_datatype, // Tipo di dati nel buffer di ricezione
+    int root,               // Rank del processo sorgente (radice)
+    MPI_Comm communicator   // Communicator
+);
+
+int MPI_Gather(
+    const void* send_data,  // Buffer di invio (il dato locale) in ciascun processo
+    int send_count,         // Numero di elementi inviati *da ciascun* processo
+    MPI_Datatype send_datatype, // Tipo di dati del dato inviato
+    void* recv_data,        // Buffer di ricezione (solo root) che conterrà tutti i dati
+    int recv_count,         // Numero di elementi ricevuti *da ciascun* processo (solo root)
+    MPI_Datatype recv_datatype, // Tipo di dati del dato ricevuto
+    int root,               // Rank del processo destinatario (radice)
+    MPI_Comm communicator   // Communicator
+);
