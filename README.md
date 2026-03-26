@@ -41,7 +41,7 @@ The repository is organized into dedicated folders for each domain. **Each folde
 * [**02 Event-driven Applications (Kafka)**](./02-event-driven-kafka)
 * [**03 Computing Continuum (Node.js & Node-RED)**](./03-computing-continuum-nodejs)
 * [**04 Big Data Analytics (Spark)**](./04-big-data-spark)
-* [**05 High-performance Computing (MPI)**](./05-hpc-mpi)
+* [**05 High-performance Computing (MPI)**](./05-high-performance-computing-mpi)
 * [**06 Internet of Things (Contiki-NG)**](./06-iot-contiki-ng)
 
 ---
