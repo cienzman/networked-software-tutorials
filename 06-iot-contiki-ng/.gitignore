@@ -1,0 +1,30 @@
+# Compiled Object files
+*.o
+*.a
+*.elf
+*.hex
+*.bin
+*.map
+
+# Contiki-NG specific binaries
+*.native
+*.cooja
+*.sky
+*.z1
+*.wismote
+*.csc
+*.ce
+
+# Build directories
+obj_*/
+build/
+
+# Tools and logs
+tools/cooja/build/
+tools/cooja/dist/
+tools/cooja/logs/
+
+# Editor/OS temporary files
+*~
+.*.swp
+.DS_Store
